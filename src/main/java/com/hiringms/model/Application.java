@@ -1,5 +1,6 @@
 package com.hiringms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -16,12 +17,14 @@ public class Application {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "job_id", nullable = false)
+    @JsonIgnoreProperties({"postedBy", "description"})
     private Job job;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "candidate_id", nullable = false)
+    @JsonIgnoreProperties({"password", "resumeUrl", "skills", "experience", "createdAt", "phone"})
     private User candidate;
 
     @Enumerated(EnumType.STRING)

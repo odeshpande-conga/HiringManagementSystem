@@ -1,5 +1,6 @@
 package com.hiringms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -30,8 +31,9 @@ public class Job {
 
     private String type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "posted_by")
+    @JsonIgnoreProperties({"password", "resumeUrl", "skills", "experience", "createdAt", "phone"})
     private User postedBy;
 
     private boolean active;
