@@ -1,0 +1,167 @@
+{
+  "agent": {
+    "name": "HireFlow Product Agent",
+    "version": "1.0.0",
+    "description": "Central knowledge agent for the HireFlow Hiring Management System. Handles product info, git operations, and inter-agent communication.",
+    "capabilities": [
+      "product-knowledge",
+      "git-operations",
+      "api-documentation",
+      "deployment-info",
+      "inter-agent-communication",
+      "troubleshooting"
+    ]
+  },
+  "project": {
+    "name": "HireFlow",
+    "fullName": "Hiring Management System",
+    "type": "spring-boot-webapp",
+    "language": "java",
+    "javaVersion": "17",
+    "framework": "spring-boot-3.2.5",
+    "buildTool": "maven",
+    "artifactId": "hiring-management-system",
+    "groupId": "com.hiringms",
+    "version": "1.0-SNAPSHOT",
+    "packaging": "jar"
+  },
+  "runtime": {
+    "local": {
+      "port": 5000,
+      "baseUrl": "http://localhost:5000",
+      "database": "h2-inmemory",
+      "dbUrl": "jdbc:h2:mem:hiringdb",
+      "profile": "default"
+    },
+    "azure": {
+      "port": 8080,
+      "database": "azure-sql",
+      "profile": "azure"
+    }
+  },
+  "api": {
+    "baseUrl": "/api",
+    "authType": "JWT-Bearer",
+    "responseFormat": "{success: boolean, message: string, data: any}",
+    "publicEndpoints": [
+      "POST /api/auth/register",
+      "POST /api/auth/login"
+    ],
+    "protectedEndpoints": [
+      "GET /api/jobs",
+      "GET /api/jobs/{id}",
+      "POST /api/jobs",
+      "PUT /api/jobs/{id}",
+      "DELETE /api/jobs/{id}",
+      "POST /api/applications",
+      "GET /api/applications/my",
+      "GET /api/applications/job/{jobId}",
+      "PUT /api/applications/{id}/status",
+      "GET /api/users/profile",
+      "PUT /api/users/profile",
+      "POST /api/upload/resume"
+    ],
+    "adminEndpoints": [
+      "GET /api/admin/users",
+      "DELETE /api/admin/users/{id}"
+    ]
+  },
+  "auth": {
+    "type": "JWT",
+    "headerFormat": "Authorization: Bearer <token>",
+    "tokenExpiry": "24h",
+    "algorithm": "HS256",
+    "roles": ["CANDIDATE", "RECRUITER", "ADMIN"],
+    "registerPayload": {
+      "email": "string (required, valid email)",
+      "password": "string (required)",
+      "fullName": "string (required)",
+      "phone": "string (optional)",
+      "role": "string (required: CANDIDATE|RECRUITER|ADMIN)"
+    },
+    "loginPayload": {
+      "email": "string (required)",
+      "password": "string (required)"
+    },
+    "authResponse": {
+      "token": "string (JWT)",
+      "email": "string",
+      "role": "string",
+      "fullName": "string"
+    }
+  },
+  "database": {
+    "entities": {
+      "User": {
+        "table": "users",
+        "fields": ["id", "email", "password", "fullName", "phone", "role", "resumeUrl", "skills", "experience", "createdAt"],
+        "roles": ["CANDIDATE", "RECRUITER", "ADMIN"]
+      },
+      "Job": {
+        "table": "jobs",
+        "fields": ["id", "title", "description", "location", "company", "salary", "type", "postedBy", "active", "createdAt"]
+      },
+      "Application": {
+        "table": "applications",
+        "fields": ["id", "job", "candidate", "status", "coverLetter", "appliedAt"],
+        "statuses": ["PENDING", "REVIEWED", "SHORTLISTED", "REJECTED", "ACCEPTED"]
+      }
+    }
+  },
+  "git": {
+    "branchStrategy": {
+      "production": "main",
+      "integration": "develop",
+      "features": "feature/*",
+      "hotfixes": "hotfix/*"
+    },
+    "commitConvention": {
+      "feature": "feat: <description>",
+      "bugfix": "fix: <description>",
+      "refactor": "refactor: <description>",
+      "docs": "docs: <description>",
+      "style": "style: <description>",
+      "config": "config: <description>"
+    }
+  },
+  "deployment": {
+    "startCommand": "mvn spring-boot:run",
+    "buildCommand": "mvn clean package -DskipTests",
+    "jarPath": "target/hiring-management-system-1.0-SNAPSHOT.jar",
+    "dockerBuild": "docker build -t hireflow:latest .",
+    "startScript": {
+      "windows": "start.bat",
+      "unix": "start.sh"
+    },
+    "requiredEnvVars": [
+      "SERVER_PORT",
+      "DB_URL",
+      "DB_USERNAME",
+      "DB_PASSWORD",
+      "JWT_SECRET",
+      "SPRING_PROFILES_ACTIVE"
+    ]
+  },
+  "testing": {
+    "sampleUsers": {
+      "admin": {
+        "email": "admin@test.com",
+        "password": "admin123",
+        "role": "ADMIN"
+      },
+      "recruiter": {
+        "email": "recruiter@test.com",
+        "password": "pass123",
+        "role": "RECRUITER"
+      },
+      "candidate": {
+        "email": "candidate@test.com",
+        "password": "pass123",
+        "role": "CANDIDATE"
+      }
+    },
+    "healthCheck": "GET /api/auth/login (returns 405 if running)",
+    "note": "In-memory DB resets on restart. Register users each session."
+  }
+}
+
