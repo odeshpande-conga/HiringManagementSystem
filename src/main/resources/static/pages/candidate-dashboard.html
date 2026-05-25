@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Dashboard - HireFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand"><a href="/" style="color:inherit;text-decoration:none;">HireFlow</a></div>
+        <div class="nav-links">
+            <a href="/pages/jobs.html">Jobs</a>
+            <a href="/pages/apply.html">Apply</a>
+            <a href="/pages/candidate-dashboard.html">Dashboard</a>
+            <a href="#" onclick="logout()" style="color:var(--danger);">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="page-title">📊 Candidate Dashboard</h1>
+
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h4>Applications Sent</h4>
+                <div class="number" id="totalApps">0</div>
+            </div>
+            <div class="stat-card">
+                <h4>Pending</h4>
+                <div class="number" id="pending" style="color:var(--warning);">0</div>
+            </div>
+            <div class="stat-card">
+                <h4>Shortlisted</h4>
+                <div class="number" id="shortlisted" style="color:var(--secondary);">0</div>
+            </div>
+            <div class="stat-card">
+                <h4>Accepted</h4>
+                <div class="number" id="accepted" style="color:var(--success);">0</div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>My Applications</h2>
+            <a href="/pages/jobs.html" class="btn-primary" style="width:auto; padding:8px 18px; font-size:0.85rem;">+ Browse Jobs</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr><th>Job Title</th><th>Company</th><th>Status</th><th>Applied On</th></tr>
+                </thead>
+                <tbody id="applicationsTable">
+                    <tr><td colspan="4" style="text-align:center; padding:2rem; color:var(--gray-400);">Loading applications...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="footer">© 2026 HireFlow — Hiring Management System</div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        function getStatusBadge(status) {
+            const map = {
+                'PENDING': 'badge badge-warning',
+                'REVIEWED': 'badge',
+                'SHORTLISTED': 'badge badge-success',
+                'ACCEPTED': 'badge badge-success',
+                'REJECTED': 'badge badge-danger'
+            };
+            return map[status] || 'badge';
+        }
+
+        async function loadDashboard() {
+            const appsResult = await getMyApplications();
+            if (appsResult.success) {
+                const apps = appsResult.data;
+                document.getElementById('totalApps').textContent = apps.length;
+                document.getElementById('pending').textContent = apps.filter(a => a.status === 'PENDING').length;
+                document.getElementById('shortlisted').textContent = apps.filter(a => a.status === 'SHORTLISTED').length;
+                document.getElementById('accepted').textContent = apps.filter(a => a.status === 'ACCEPTED').length;
+
+                document.getElementById('applicationsTable').innerHTML = apps.length ? apps.map(a => `
+                    <tr>
+                        <td><strong>${a.job ? a.job.title : 'N/A'}</strong></td>
+                        <td>${a.job ? a.job.company : 'N/A'}</td>
+                        <td><span class="${getStatusBadge(a.status)}">${a.status}</span></td>
+                        <td>${a.appliedAt ? new Date(a.appliedAt).toLocaleDateString() : 'N/A'}</td>
+                    </tr>
+                `).join('') : '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--gray-400);">No applications yet. <a href="/pages/jobs.html">Browse jobs</a> to get started!</td></tr>';
+            }
+        }
+        loadDashboard();
+    </script>
+</body>
+</html>

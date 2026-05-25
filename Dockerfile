@@ -1,0 +1,24 @@
+# ============================================================
+# HireFlow - Dockerfile for Azure App Service
+# ============================================================
+FROM eclipse-temurin:17-jdk-alpine AS build
+
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+
+RUN apk add --no-cache maven && \
+    mvn clean package -DskipTests
+
+# ============================================================
+FROM eclipse-temurin:17-jre-alpine
+
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+
+# Azure App Service uses PORT env variable
+EXPOSE 8080
+
+# Environment variables are injected by Azure App Service
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=${SPRING_PROFILES_ACTIVE:local}"]
+

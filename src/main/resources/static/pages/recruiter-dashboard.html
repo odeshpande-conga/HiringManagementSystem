@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiter Dashboard - HireFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand"><a href="/" style="color:inherit;text-decoration:none;">HireFlow</a></div>
+        <div class="nav-links">
+            <a href="/pages/jobs.html">Jobs</a>
+            <a href="/pages/recruiter-dashboard.html">Dashboard</a>
+            <a href="#" onclick="logout()" style="color:var(--danger);">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="page-title">📋 Recruiter Dashboard</h1>
+
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h4>Jobs Posted</h4>
+                <div class="number" id="totalJobs">0</div>
+            </div>
+            <div class="stat-card">
+                <h4>Total Applications</h4>
+                <div class="number" id="totalApps">0</div>
+            </div>
+            <div class="stat-card">
+                <h4>Pending Review</h4>
+                <div class="number" id="pending" style="color:var(--warning);">0</div>
+            </div>
+            <div class="stat-card">
+                <h4>Shortlisted</h4>
+                <div class="number" id="shortlisted" style="color:var(--success);">0</div>
+            </div>
+        </div>
+
+        <!-- Post New Job -->
+        <div class="card" style="max-width:680px; margin:2rem auto;">
+            <h3 style="margin-bottom:1.25rem;">➕ Post a New Job</h3>
+            <form id="jobForm">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                    <div class="form-group">
+                        <label>Job Title</label>
+                        <input type="text" id="title" placeholder="e.g. Senior Developer" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Company</label>
+                        <input type="text" id="company" placeholder="e.g. Google" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" id="location" placeholder="e.g. New York, NY" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Salary</label>
+                        <input type="text" id="salary" placeholder="e.g. $120k - $150k">
+                    </div>
+                    <div class="form-group">
+                        <label>Job Type</label>
+                        <select id="jobType">
+                            <option value="FULL_TIME">Full Time</option>
+                            <option value="PART_TIME">Part Time</option>
+                            <option value="CONTRACT">Contract</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Skills Required</label>
+                        <input type="text" id="skills" placeholder="Java, React, SQL">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="description" rows="4" placeholder="Describe the role, responsibilities, and requirements..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Publish Job</button>
+            </form>
+        </div>
+
+        <!-- Applicants Table -->
+        <div class="section-header">
+            <h2>Recent Applicants</h2>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr><th>Candidate</th><th>Job</th><th>Status</th><th>Applied On</th><th>Action</th></tr>
+                </thead>
+                <tbody id="applicantsTable">
+                    <tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--gray-400);">No applicants yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="footer">© 2026 HireFlow — Hiring Management System</div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        document.getElementById('jobForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const job = {
+                title: document.getElementById('title').value,
+                company: document.getElementById('company').value,
+                location: document.getElementById('location').value,
+                salary: document.getElementById('salary').value,
+                type: document.getElementById('jobType').value,
+                skills: document.getElementById('skills').value,
+                description: document.getElementById('description').value
+            };
+            const result = await createJob(job);
+            if (result.success) {
+                alert('✅ Job posted successfully!');
+                document.getElementById('jobForm').reset();
+            } else {
+                alert('❌ ' + (result.message || 'Failed to post job.'));
+            }
+        });
+    </script>
+</body>
+</html>

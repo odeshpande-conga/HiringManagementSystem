@@ -1,0 +1,78 @@
+admin@test.com<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - HireFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand"><a href="/" style="color:inherit;text-decoration:none;">HireFlow</a></div>
+        <div class="nav-links">
+            <a href="/pages/login.html">Login</a>
+            <a href="/pages/register.html" class="btn">Register</a>
+        </div>
+    </nav>
+
+    <div class="form-container">
+        <h2>Create Account</h2>
+        <p class="form-subtitle">Join HireFlow and start your journey</p>
+        <div id="alert" class="alert" style="display:none;"></div>
+        <form id="registerForm">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="fullName" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Create a strong password" required>
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="phone" placeholder="+1 (555) 000-0000">
+            </div>
+            <div class="form-group">
+                <label>I want to</label>
+                <select id="role" required>
+                    <option value="CANDIDATE">Find a Job (Candidate)</option>
+                    <option value="RECRUITER">Hire Talent (Recruiter)</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary">Create Account</button>
+        </form>
+        <p style="text-align:center; margin-top:1.5rem; color:var(--gray-500); font-size:0.9rem;">
+            Already have an account? <a href="/pages/login.html">Sign in</a>
+        </p>
+    </div>
+
+    <div class="footer">© 2026 HireFlow — Hiring Management System</div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                phone: document.getElementById('phone').value,
+                role: document.getElementById('role').value
+            };
+            const result = await register(formData);
+            if (!result.success) {
+                const alert = document.getElementById('alert');
+                alert.className = 'alert alert-error';
+                alert.textContent = result.message || 'Registration failed. Please try again.';
+                alert.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
